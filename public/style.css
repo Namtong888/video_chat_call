@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .entry-modal {
+    width: 300px;
+    margin: auto;
+    z-index: 9999;
+    position: absolute;
+    left: 50%;
+    top: 70;
+    margin-left: -150px;
+    padding: 5px;
+    color: #fff;
+    background-color: #c9c3c3;
+    text-align: center;
+  }
+  .chat {
+    width: 100px;
+    margin: auto;
+    z-index: 9999;
+    position: absolute;
+    left: 50%;
+    margin-left: -700px;
+    padding: 5px;
+    color: rgb(7, 7, 7);
+    text-align: center;
+  }
+  #notification {
+    position: absolute;
+    z-index: 1;
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    top: 47.33px;
+    font-size: 18pt;
+    width: 100%;
+    background-color: orange;
+  }
+
+  .room-input {
+    border: none;
+    padding: 5px;
+  }
+
+  button {
+    margin: 3px;
+    padding: 5px;
+  }
+
+  #remote-video {
+    top: 10;
+    height: 80%;
+    width: 80%;
+    left: 10%;
+    position: absolute;
+  }
+
+  #local-video {
+    top: 10;
+    width: 300;
+    object-fit: cover;
+    height: 150;
+    z-index: 1;
+    right: 15;
+    position: absolute;
+  }
+  .meet-controls-bar {
+    bottom: 0;
+    left: 0%;
+    position: absolute;
+    width: 100%;
+  }
+  /** chat **/
+  #form {
+    width: 300px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.25rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    height: 3rem;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+  }
+  #input {
+    padding: 0 1rem;
+    flex-grow: 1;
+    border-radius: 2rem;
+    margin: 0.25rem;
+  }
+  #input:focus {
+    outline: none;
+  }
+  #form > button {
+    background: #333;
+    border: none;
+    padding: 0 1rem;
+    margin: 0.25rem;
+    border-radius: 3px;
+    outline: none;
+    color: #fff;
+  }
+
+  #messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  #messages > li {
+    padding: 0.5rem 1rem;
+  }
+  #messages > li:nth-child(odd) {
+    background: #efefef;
+  }

@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>Video Meeting</title>
+  </head>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+
+  <body>
+    <!-- <div>
+      <input id="peer_id" type="text" style="margin-top: 5px; margin-left: 20px;" /> Your Id  </br>
+     
+      <input id="Friend_id" type="text" style="margin-top: 5px; margin-left: 20px;"  /> Friend_id
+    </div> -->
+    <p id="notification" hidden></p>
+    <!-- <div class="entry-modal" id="entry-modal">
+      <p>Tạo hoặc tham gia cuộc hộp</p>
+      <input id="room-input" class="room-input" placeholder="Enter Room ID" />
+      <div>
+        <button onclick="rdRoom()">Lấy IdRoom</button>
+        <button onclick="createRoom()">join phòng</button>
+        <a href="/"></a>
+      </div>
+    </div> -->
+    <div class="chat" id="chat" hidden>
+      <ul id="messages"></ul>
+    </div>
+    <div class="meet-area">
+      <!-- Remote Video Element-->
+      <video id="remote-video"></video>
+
+      <!-- Local Video Element-->
+      <video id="local-video"></video>
+      <div class="meet-controls-bar">
+        <div>
+          <input id="input" type="text" />
+          <button onclick="send_chat()">Send</button>
+        </div>
+        
+        <button style="float: right; background: darkturquoise;" onclick="startScreenShare()">
+          Trình bày
+        </button>
+        <a href="/" style="float: right;"><button style="background: crimson;">close</button></a>
+        <button id="play_video" onclick="playStop()" style="float: right">
+          Video
+        </button>
+        <button id="play_micro" onclick="muteUnmute()" style="float: right">
+          Micro
+        </button>
+
+
+        <div style="float: right; margin-right: 30px; margin-left: 10px;" id="call"  >
+          <button onclick="callClick()" style="background: chartreuse;">Call_Video</button>
+        </div>
+         <div style="float: right; margin-top: 5px;" >
+          Your Id: <input id="peer_id" type="text" />    
+          Friend_id:<input id="Friend_id" type="text" /> 
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+    <script src="peer.js"></script>
+  </body>
+</html>
