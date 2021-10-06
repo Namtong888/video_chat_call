@@ -7,6 +7,7 @@ const videoGrid = document.getElementById("video-grid");
 const myVideo = document.createElement("video");
 const videoshare = document.getElementById("sharecreen");
 var local_stream;
+var currentUserId;
 var currentPeer = null;
 var screenSharing = false;
 const myPeer = new Peer();
@@ -19,7 +20,7 @@ navigator.mediaDevices
     audio: true,
   })
   .then((stream) => {
-    addVideoStream(myVideo, stream);
+    addVideoStream(myVideo, stream, "me");
     local_stream = stream;
     myPeer.on("call", (call) => {
       call.answer(local_stream);
@@ -36,19 +37,27 @@ navigator.mediaDevices
 
     document.addEventListener("keydown", (e) => {
       if (e.which === 13 && chatInputBox.value != "") {
-        socket.emit("message", chatInputBox.value);
+        socket.emit("message", {
+          msg: chatInputBox.value,
+          user: currentUserId,
+        });
         chatInputBox.value = "";
       }
     });
 
-    socket.on("createMessage", (msg) => {
-      console.log(msg);
+    socket.on("createMessage", (message) => {
+      console.log(message);
       let li = document.createElement("li");
-      li.innerHTML = msg;
+      if (message.user != currentUserId) {
+        li.classList.add("otherUser");
+        li.innerHTML = `<div><b style="font-size: 10px; color: red"> user (<small>${message.user}</small>)  </b></br> ${message.msg}<div>`;
+      } else {
+        li.innerHTML = `<div style="text-align: right"><b style="font-size: 10px;  color: red"">you</b></br> ${message.msg}<div>`;
+      }
       all_messages.append(li);
       main__chat__window.scrollTop = main__chat__window.scrollHeight;
-    });
 
+    });
   });
 
 socket.on("user-disconnected", (userId) => {
@@ -56,6 +65,7 @@ socket.on("user-disconnected", (userId) => {
 });
 
 myPeer.on("open", (id) => {
+  currentUserId = id;
   socket.emit("join-room", ROOM_ID, id);
 });
 
@@ -73,8 +83,9 @@ function connectToNewUser(userId, stream) {
   peers[userId] = call;
 }
 
-function addVideoStream(video, stream) {
+function addVideoStream(video, stream, uId = "") {
   video.srcObject = stream;
+  video.id = uId;
   video.addEventListener("loadedmetadata", () => {
     video.play();
   });
@@ -93,12 +104,10 @@ const playStop = () => {
   let enabled = local_stream.getVideoTracks()[0].enabled;
   if (enabled) {
     local_stream.getVideoTracks()[0].enabled = false;
-    document.getElementById("play_video").style.color = "white";
-    document.getElementById("play_video").style.background = "red";
+    setPlayVideo();
   } else {
     local_stream.getVideoTracks()[0].enabled = true;
-    document.getElementById("play_video").style.background = "white";
-    document.getElementById("play_video").style.color = "black";
+    setStopVideo();
   }
 };
 
@@ -106,14 +115,34 @@ const muteUnmute = () => {
   const enabled = local_stream.getAudioTracks()[0].enabled;
   if (enabled) {
     local_stream.getAudioTracks()[0].enabled = false;
-    document.getElementById("play_micro").style.color = "white";
-    document.getElementById("play_micro").style.background = "red";
+    setUnmuteButton();
   } else {
     local_stream.getAudioTracks()[0].enabled = true;
-    document.getElementById("play_micro").style.background = "white";
-    document.getElementById("play_micro").style.color = "black";
+    setMuteButton();
   }
 };
+
+const setPlayVideo = () => {
+  const html = `<i class="unmute fa fa-pause-circle"></i>`;
+  document.getElementById("playPauseVideo").innerHTML = html;
+};
+
+const setStopVideo = () => {
+  const html = `<i class=" fa fa-video-camera"></i>`;
+  document.getElementById("playPauseVideo").innerHTML = html;
+};
+
+const setUnmuteButton = () => {
+  const html = `<i class="unmute fa fa-microphone-slash"></i>`;
+  document.getElementById("muteButton").innerHTML = html;
+};
+const setMuteButton = () => {
+  const html = `<i class="fa fa-microphone"></i>`;
+  document.getElementById("muteButton").innerHTML = html;
+};
+
+
+
 
 // chia sẻ màng hình
 function showscreen() {
