@@ -3,9 +3,9 @@ const chatInputBox = document.getElementById("chat_message");
 const all_messages = document.getElementById("all_messages");
 const main__chat__window = document.getElementById("main__chat__window");
 const videoGrid = document.getElementById("video-grid");
-// const myVideo = document.getElementById("my-video");
+ const share = document.getElementById("my-video");
 const myVideo = document.createElement("video");
-const videoshare = document.getElementById("sharecreen");
+// const videoshare = document.getElementById("sharecreen");
 var local_stream;
 var currentUserId;
 var currentPeer = null;
@@ -146,17 +146,17 @@ const setMuteButton = () => {
 
 // chia sẻ màng hình
 function showscreen() {
-  document.getElementById("sharecreen").hidden = false;
+  document.getElementById("sharescreen").hidden = false;
 }
 function unshowscreen() {
-  document.getElementById("sharecreen").hidden = true;
+  document.getElementById("sharescreen").hidden = true;
 }
 
 function startScreenShare() {
   navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
     showscreen();
     local_stream = stream;
-    addVideoStream(videoshare, local_stream);
+    addVideoStream(share, local_stream);
 
     console.log(local_stream);
   });
