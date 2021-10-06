@@ -7,10 +7,16 @@ const videoGrid = document.getElementById("video-grid");
 const myVideo = document.createElement("video");
 // const videoshare = document.getElementById("sharecreen");
 var local_stream;
+var shareId = {
+  id: ""
+};
 var currentUserId;
-var currentPeer = null;
+var currentPeer;
 var screenSharing = false;
 const myPeer = new Peer();
+var user_stream = {
+  id: null
+} ;
 
 myVideo.muted = true;
 const peers = {};
@@ -28,11 +34,12 @@ navigator.mediaDevices
       call.on("stream", (userVideoStream) => {
         addVideoStream(video, userVideoStream);
       });
-      currentPeer = call;
+      // currentPeer = call.peerConnection;
     });
 
     socket.on("user-connected", (userId) => {
       connectToNewUser(userId, stream);
+      console.log(peers);
     });
 
     document.addEventListener("keydown", (e) => {
@@ -56,7 +63,6 @@ navigator.mediaDevices
       }
       all_messages.append(li);
       main__chat__window.scrollTop = main__chat__window.scrollHeight;
-
     });
   });
 
@@ -64,10 +70,13 @@ socket.on("user-disconnected", (userId) => {
   if (peers[userId]) peers[userId].close();
 });
 
+
 myPeer.on("open", (id) => {
   currentUserId = id;
   socket.emit("join-room", ROOM_ID, id);
 });
+
+
 
 function connectToNewUser(userId, stream) {
   const call = myPeer.call(userId, stream);
@@ -75,12 +84,14 @@ function connectToNewUser(userId, stream) {
   call.on("stream", (userVideoStream) => {
     addVideoStream(video, userVideoStream);
   });
-  currentPeer = call;
+  
   call.on("close", () => {
     video.remove();
   });
+
   console.log(call);
   peers[userId] = call;
+  currentPeer = call.peerConnection;
 }
 
 function addVideoStream(video, stream, uId = "") {
@@ -153,20 +164,28 @@ function unshowscreen() {
 }
 
 function startScreenShare() {
-  navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
-    showscreen();
+  console.log(shareId);
+  navigator.mediaDevices.getDisplayMedia({ video: true })
+  .then((stream) => {
+    // showscreen();
     local_stream = stream;
-    addVideoStream(share, local_stream);
-
-    console.log(local_stream);
-  });
-  myPeer.on("open", (id) => {
-    socket.emit("join-room", ROOM_ID, id);
+    addVideoStream(myVideo, local_stream);
+    const videoTrack = stream.getVideoTracks()[0];
+    videoTrack.onended = () => {
+      stopScreenSharing();
+    };
+  
+    const sender = currentPeer.getSenders().find(s => s.track.kind === videoTrack.kind);
+     sender.replaceTrack(videoTrack);
+     console.log(local_stream);
   });
 }
 
 function stopScreenSharing() {
   unshowscreen();
+  const videoTrack = lazyStream.getVideoTracks()[0];
+    const sender = currentPeer.getSenders().find(s => s.track.kind === videoTrack.kind);
+    sender.replaceTrack(videoTrack);
 }
 
 // function startScreenShare() {
