@@ -13,6 +13,7 @@
     </script>
     <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
     <script src="/socket.io/socket.io.js" defer></script>
+    
     <script src="script.js" defer></script>
     <title>Video Chat Room</title>
     <style>
@@ -173,10 +174,17 @@
           </div>
 
           <div class="main__controls_block">
-            <!-- <div class="main__controls_button" onclick="startScreenShare()">
+            <!-- <div class="main__controls_button" id="share-screen" >
                <i class="fa fa-comment"></i> 
               <span>Share Screen</span>
-            </div> -->
+            </div>
+             <div class="main__controls_button" onclick="join()">
+              <i class="fa fa-comment"></i> 
+             <span>join</span> 
+            <div class="main__controls_button" onclick="join()">
+              <i class="fa fa-comment"></i> 
+             <span>join</span> -->
+           </div>
           </div>
 
           <div class="main__controls_block">

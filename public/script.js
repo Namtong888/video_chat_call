@@ -3,20 +3,17 @@ const chatInputBox = document.getElementById("chat_message");
 const all_messages = document.getElementById("all_messages");
 const main__chat__window = document.getElementById("main__chat__window");
 const videoGrid = document.getElementById("video-grid");
- const share = document.getElementById("my-video");
+const share = document.getElementById("my-video");
 const myVideo = document.createElement("video");
 // const videoshare = document.getElementById("sharecreen");
 var local_stream;
-var shareId = {
-  id: ""
-};
+var share_stream;
 var currentUserId;
 var currentPeer;
 var screenSharing = false;
 const myPeer = new Peer();
-var user_stream = {
-  id: null
-} ;
+var user_stream = [];
+let myScreenStream;
 
 myVideo.muted = true;
 const peers = {};
@@ -26,20 +23,11 @@ navigator.mediaDevices
     audio: true,
   })
   .then((stream) => {
-    addVideoStream(myVideo, stream, "me");
     local_stream = stream;
-    myPeer.on("call", (call) => {
-      call.answer(local_stream);
-      const video = document.createElement("video");
-      call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
-      });
-      // currentPeer = call.peerConnection;
-    });
-
+    addVideoStream(myVideo, stream, "me");
     socket.on("user-connected", (userId) => {
       connectToNewUser(userId, stream);
-      console.log(peers);
+      user_stream.push(...userId);
     });
 
     document.addEventListener("keydown", (e) => {
@@ -66,17 +54,38 @@ navigator.mediaDevices
     });
   });
 
+myPeer.on("call", (call) => {
+  call.answer(local_stream);
+  const video = document.createElement("video");
+  call.on("stream", (userVideoStream) => {
+    addVideoStream(video, userVideoStream);
+  });
+});
+
+document.getElementById("share-screen").addEventListener("click", (e) => {
+  navigator.mediaDevices
+    .getDisplayMedia({
+      video: true,
+    })
+    .then((stream) => {
+     socket.emit("screen-share", stream);
+    });
+    socket.on("screenShare", stream => {
+      let vd = document.createElement("video");
+       addVideoStream(vd , stream , "me")
+      // videoGrid.append(vd);
+    });
+});
+
+
 socket.on("user-disconnected", (userId) => {
   if (peers[userId]) peers[userId].close();
 });
-
 
 myPeer.on("open", (id) => {
   currentUserId = id;
   socket.emit("join-room", ROOM_ID, id);
 });
-
-
 
 function connectToNewUser(userId, stream) {
   const call = myPeer.call(userId, stream);
@@ -84,12 +93,10 @@ function connectToNewUser(userId, stream) {
   call.on("stream", (userVideoStream) => {
     addVideoStream(video, userVideoStream);
   });
-  
+
   call.on("close", () => {
     video.remove();
   });
-
-  console.log(call);
   peers[userId] = call;
   currentPeer = call.peerConnection;
 }
@@ -152,9 +159,6 @@ const setMuteButton = () => {
   document.getElementById("muteButton").innerHTML = html;
 };
 
-
-
-
 // chia sẻ màng hình
 function showscreen() {
   document.getElementById("sharescreen").hidden = false;
@@ -162,30 +166,28 @@ function showscreen() {
 function unshowscreen() {
   document.getElementById("sharescreen").hidden = true;
 }
-
+function laychim() {
+  console.log(user_stream);
+}
 function startScreenShare() {
-  console.log(shareId);
-  navigator.mediaDevices.getDisplayMedia({ video: true })
-  .then((stream) => {
-    // showscreen();
+  navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+    showscreen();
     local_stream = stream;
-    addVideoStream(myVideo, local_stream);
-    const videoTrack = stream.getVideoTracks()[0];
-    videoTrack.onended = () => {
-      stopScreenSharing();
-    };
-  
-    const sender = currentPeer.getSenders().find(s => s.track.kind === videoTrack.kind);
-     sender.replaceTrack(videoTrack);
-     console.log(local_stream);
+    addVideoStream(share, local_stream);
+    let call = peer.call(ROOM_ID, stream);
+    call.on("stream", (stream) => {
+      addVideoStream(stream);
+    });
   });
 }
 
 function stopScreenSharing() {
   unshowscreen();
   const videoTrack = lazyStream.getVideoTracks()[0];
-    const sender = currentPeer.getSenders().find(s => s.track.kind === videoTrack.kind);
-    sender.replaceTrack(videoTrack);
+  const sender = currentPeer
+    .getSenders()
+    .find((s) => s.track.kind === videoTrack.kind);
+  sender.replaceTrack(videoTrack);
 }
 
 // function startScreenShare() {
