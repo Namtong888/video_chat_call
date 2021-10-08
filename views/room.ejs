@@ -16,7 +16,6 @@
     <script src="script.js" defer></script>
     <title>Video Chat Room</title>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
       * {
         margin: 0;
         padding: 0;
@@ -28,7 +27,7 @@
         font-family: "Roboto", sans-serif;
       }
       #video-grid {
-       
+        display: flex;
         justify-content: center;
         height: 100%;
         width: 100%;
@@ -37,7 +36,6 @@
         overflow-y: auto;
       }
       video {
-        
         flex: 1;
         object-fit: cover;
         border: 5px solid #000;
@@ -74,23 +72,35 @@
         display: flex;
       }
       .main__controls_button {
+        flex-direction: column;
+        cursor: pointer;
         padding: 10px;
-        min-width: 20px;
+        justify-content: center;
+        align-items: center;
+    
+        transition: all 0.3s ease-in-out;
         border-radius: 10px;
-        text-align: center;
+        margin: 5px;
+      }
+      .main__controls_button span {
+        margin-top: 10px;
+        display: block;
       }
       .main__controls_button:hover {
-        color: aliceblue;
         background-color: #34383b;
       }
-    
+      .main__controls_button i {
+        font-size: 25px;
+      }
       .leaveMeeting {
+        background-color: red;
         color: black;
       }
       .main__header {
         color: black;
         text-align: center;
         padding: 20px;
+        border-bottom: 2px solid #3d3d42;
       }
       .main__chat__window {
         flex-grow: 1;
@@ -125,7 +135,7 @@
         width: 50px;
         border-radius: 10px;
       }
-      #join:hover{
+      #join:hover {
         background: rgb(7, 73, 7);
       }
     </style>
@@ -150,9 +160,10 @@
     <div class="main">
       <div class="main__left">
         <div class="main__videos">
-          <div id="video-grid">
+          <div id="video-grid"></div>
+          <div id="video-share">
             <div id="sharescreen" hidden>
-              <video id="my-video" width="400px" height="300px"></video>
+              <video id="my-video" width="100%" height="100%"></video>
             </div>
           </div>
         </div>
@@ -179,11 +190,8 @@
               <!-- <i class="fa fa-comment"></i> -->
               <span>Share Screen</span>
             </div>
-            <button id="join" >
-              <span>join</span>
-            </button>
-            <button id="xoa" >
-              <span>xoa</span>
+            <button id="join">
+              <span>JOIN</span>
             </button>
           </div>
 
@@ -193,7 +201,7 @@
                 class="main__controls_button leaveMeeting"
                 id="leave-meeting"
               >
-                <i class="fa fa-times"> stop</i>
+                <i class="fa fa-times"></i>
               </div>
             </a>
           </div>

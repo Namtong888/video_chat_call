@@ -105,9 +105,13 @@ document.getElementById("share-screen").addEventListener("click", (e) => {
     })
     .then((stream) => {
       share_stream = stream;
-      // showscreen();
-      let vd = document.createElement("video");
-      addVideoStream(vd, stream, currentUserId);
+      showscreen();
+      share.srcObject = stream;
+      share.id = currentUserId;
+      share.addEventListener("loadedmetadata", () => {
+        share.play();
+      });
+      videoGrid.append(share);
       socket.emit("join-room", ROOM_ID, currentUserId);
       share_screen = true;
     });
@@ -124,7 +128,7 @@ function connectToNewUser(userId, stream) {
   call.on("close", () => {
     video.remove();
   });
-  
+
   peers[userId] = call;
 }
 
