@@ -14,7 +14,7 @@ const peers = {};
 var share_screen = false;
 //
 const myPeer = new Peer(); // tạo peer cho người dùng kết nối
-myVideo.muted = true;
+ myVideo.muted = true;
 
 // gọi video và hiển thị video lên màng hình.
 navigator.mediaDevices
@@ -24,9 +24,12 @@ navigator.mediaDevices
   })
   .then((stream) => {
     local_stream = stream;
-    addVideoStream(myVideo, stream, "me");
+    addVideoStream(myVideo, stream, myPeer.id);
   });
 
+  // document.getElementById("xoa").addEventListener("click", (e)=>{
+  //    document.getElementById("nam").hidden =true;
+  // });
 // khi peer dc mở
 myPeer.on("open", (id) => {
   alert("Nhấp Nút 'JOIN' để tham gia trò truyện video call");
@@ -38,7 +41,6 @@ myPeer.on("open", (id) => {
   });
 });
 
-
 // nhận kết nối và thực hiện kết nối với room :
 socket.on("user-connected", (userId) => {
   connectToNewUser(userId, local_stream);
@@ -46,6 +48,7 @@ socket.on("user-connected", (userId) => {
 
 // nghe các cuộc gọi đến
 myPeer.on("call", (call) => {
+  console.log(call);
   const video = document.createElement("video");
   if (share_screen == true) {
     call.answer(share_stream);
@@ -54,14 +57,19 @@ myPeer.on("call", (call) => {
     call.answer(local_stream);
   }
   call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userVideoStream);
+    addVideoStream(video, userVideoStream, call.peer);
   });
+  call.on("close", () => {
+    video.remove();
+  });
+
 });
 
 // khi có ai đố ngắn kết nối
 socket.on("user-disconnected", (userId) => {
   if (peers[userId]) peers[userId].close();
-  alert( userId + "đã thoát kết nối");
+  alert(userId + "đã thoát kết nối");
+  document.getElementById(userId).hidden = true;
 });
 
 // giữ tin nhấn cho người call nhấn enter
@@ -99,7 +107,7 @@ document.getElementById("share-screen").addEventListener("click", (e) => {
       share_stream = stream;
       // showscreen();
       let vd = document.createElement("video");
-      addVideoStream(vd, stream, "me");
+      addVideoStream(vd, stream, currentUserId);
       socket.emit("join-room", ROOM_ID, currentUserId);
       share_screen = true;
     });
@@ -110,13 +118,13 @@ function connectToNewUser(userId, stream) {
   const call = myPeer.call(userId, stream);
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
-    addVideoStream(video, userVideoStream);
+    addVideoStream(video, userVideoStream, userId);
   });
 
   call.on("close", () => {
     video.remove();
   });
-
+  
   peers[userId] = call;
 }
 
