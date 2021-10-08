@@ -13,7 +13,6 @@
     </script>
     <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
     <script src="/socket.io/socket.io.js" defer></script>
-    
     <script src="script.js" defer></script>
     <title>Video Chat Room</title>
     <style>
@@ -75,23 +74,16 @@
         display: flex;
       }
       .main__controls_button {
-        display: flex;
         padding: 10px;
         min-width: 20px;
         border-radius: 10px;
         text-align: center;
       }
-      .main__controls_button span {
-        margin-top: 10px;
-        display: block;
-      }
       .main__controls_button:hover {
         color: aliceblue;
         background-color: #34383b;
       }
-      .main__controls_button i {
-        font-size: 25px;
-      }
+    
       .leaveMeeting {
         color: black;
       }
@@ -127,6 +119,15 @@
       .unmute {
         color: red;
       }
+      #join {
+        background: forestgreen;
+        float: right;
+        width: 50px;
+        border-radius: 10px;
+      }
+      #join:hover{
+        background: rgb(7, 73, 7);
+      }
     </style>
   </head>
   <body>
@@ -151,7 +152,7 @@
         <div class="main__videos">
           <div id="video-grid">
             <div id="sharescreen" hidden>
-              <video id="my-video" width="400px" height="400px" ></video>
+              <video id="my-video" width="400px" height="300px"></video>
             </div>
           </div>
         </div>
@@ -174,17 +175,13 @@
           </div>
 
           <div class="main__controls_block">
-             <div class="main__controls_button" id="share-screen" >
-               <!-- <i class="fa fa-comment"></i> 
+            <div class="main__controls_button" id="share-screen" hidden>
+              <!-- <i class="fa fa-comment"></i> -->
               <span>Share Screen</span>
             </div>
-             <div class="main__controls_button" onclick="join()">
-              <i class="fa fa-comment"></i> 
-             <span>join</span> 
-            <div class="main__controls_button" onclick="join()">
-              <i class="fa fa-comment"></i> 
-             <span>join</span>  -->
-           </div>
+            <button id="join" >
+              <span>join</span>
+            </button>
           </div>
 
           <div class="main__controls_block">
@@ -193,8 +190,7 @@
                 class="main__controls_button leaveMeeting"
                 id="leave-meeting"
               >
-                 <i class="fa fa-times"> stop</i> 
-               
+                <i class="fa fa-times"> stop</i>
               </div>
             </a>
           </div>

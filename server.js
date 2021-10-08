@@ -13,7 +13,9 @@ var ss = require('socket.io-stream')
 const io = require('socket.io')(server)
 const { v4: uuidV4 } = require('uuid')
 
-const stream = ss.createStream();
+// var room_id = Math.floor(Math.random() * 9999 + 1000);
+
+// const stream = ss.createStream();
 
 
 
@@ -50,8 +52,7 @@ io.on("connection", (socket) => {
       console.log(stream);
       io.to(roomId).emit('screenShare', stream)
     })
-
-    
+        
     socket.on("disconnect", () => {
       socket.to(roomId).broadcast.emit("user-disconnected", userId);
     });
