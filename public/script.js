@@ -319,13 +319,15 @@ function live(){
     window.stream = stream;
   })
   document.getElementById("Record").hidden = false;
-  document.getElementById("stopRecording").hidden = false;
-  document.getElementById("download").hidden = false;
+  
+ 
 }
 
 function recoding(){
-    startRecording();
+  startRecording();
  console.log("chạy");
+ document.getElementById("stopRecording").hidden = false;
+ document.getElementById("Record").hidden = true;
 }
 
 function startRecording() {
@@ -358,6 +360,9 @@ function handleDataAvailable(event) {
 
 function stopRecording() {
   mediaRecorder.stop();
+  document.getElementById("download").hidden = false;
+  document.getElementById("Record").hidden = true;
+  document.getElementById("stopRecording").hidden = true;
 }
 
 function download(){
@@ -366,12 +371,15 @@ function download(){
   const a = document.createElement('a');
   a.style.display = 'none';
   a.href = url;
-  a.download = 'test.mp4';
+  a.download = 'video_call.mp4';
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
   }, 100);
+  document.getElementById("Record").hidden = false;
+  document.getElementById("stopRecording").hidden = true;
+  document.getElementById("download").hidden = false;
 }
 
