@@ -81,14 +81,15 @@ socket.on("user-disconnected", (userId) => {
 // hiện giá mang hinh share
 socket.on('screenShare', (users) =>{
  var share_video =  document.getElementById(users)
-  share_video.width = 900;
-  share_video.float = right;
+  share_video.width = 1000;
+  share_video.float = "right";
+  videoGrid.textLine = center;
 })
 
 socket.on('stop--Share', (users) =>{
   var video =  document.getElementById(users)
   video.width = 200;
-  video.float = left;
+  video.float = "left";
 })
 
 // giữ tin nhấn cho người call nhấn enter
@@ -274,6 +275,13 @@ function showscreen() {
 
 function connect_share() {
   navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+    var share__video__stream = document.createElement("video");
+    share__video__stream.id = "sharevideostreamm";
+    share__video__stream.width= 300;
+    share__video__stream.srcObject = stream;
+    share__video__stream.play();
+    videoGrid.append(share__video__stream)
+
     screenStream = stream;
     let videoTrack = screenStream.getVideoTracks()[0];
     videoTracks = videoTrack;
@@ -295,6 +303,7 @@ function share_now(videoTrack) {
     console.log(element);
   });
   socket.emit("screen-share", currentUserId);
+  document.getElementById(currentUserId).hidden = true;
 }
 
 function stopScreenSharing() {
@@ -309,6 +318,8 @@ function stopScreenSharing() {
   //   track.stop();
   // });
   socket.emit("stop-share", currentUserId);
+  document.getElementById(currentUserId).hidden = false;
+  document.getElementById("sharevideostreamm").remove();
   share_screen = false;
 }
 
