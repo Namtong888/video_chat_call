@@ -10,6 +10,7 @@ var local_stream; // video của bạn
 // video được chia sẻ
 var currentUserId; //
 // var share_stream;
+// var share_video;
 const peers = {};
 const connet = [];
 var share_screen = false;
@@ -51,6 +52,8 @@ myPeer.on("open", (id) => {
 // nhận kết nối và thực hiện kết nối với room :
 socket.on("user-connected", (userId) => {
   connectToNewUser(userId, local_stream);
+  alert( userId + " đã tham gia cuộc hộp");
+
   if (share_screen == true) {
     share_now(videoTracks);
   }
@@ -75,6 +78,19 @@ socket.on("user-disconnected", (userId) => {
   document.getElementById(userId).remove();
 });
 
+// hiện giá mang hinh share
+socket.on('screenShare', (users) =>{
+ var share_video =  document.getElementById(users)
+  share_video.width = 900;
+  share_video.float = right;
+})
+
+socket.on('stop--Share', (users) =>{
+  var video =  document.getElementById(users)
+  video.width = 200;
+  video.float = left;
+})
+
 // giữ tin nhấn cho người call nhấn enter
 document.addEventListener("keydown", (e) => {
   if (e.which === 13 && chatInputBox.value != "") {
@@ -94,10 +110,10 @@ socket.on("createMessage", (message) => {
     li.classList.add("otherUser");
     li.innerHTML = `<div class="mess" id="${currentUserId}" style="border: 0.1 solid;  border-radius: 20px; background: honeydew;"><b  style="font-size: 8px; color: red; margin-left:5px"> user(<small>${message.user}</small>) </b></br><span style="font-size: 13px; margin-left:10px;"> ${message.msg}</span><div>`;
   } else {
-    li.innerHTML = `<div  class="mess" id="${currentUserId}" style="text-align: right; border: 0.1 solid;  border-radius: 20px; background: moccasin;"><b style="font-size: 8px; color: red; margin-right:5px">you</b></br> <span style="font-size: 13px; margin-right:10px;"> ${message.msg}</span><div>`;
+    li.innerHTML = `<div class="mess" id="${currentUserId}" style="text-align: right; border: 0.1 solid;  border-radius: 20px; background: moccasin;"><b style="font-size: 8px; color: red; margin-right:5px">you</b></br> <span style="font-size: 13px; margin-right:10px;"> ${message.msg}</span><div>`;
   }
   all_messages.append(li);
-  all_messages.scrollTop = all_messages.scrollHeight;
+  main__chat__window.scrollTop = main__chat__window.scrollHeight;
 });
 
 // thực hiện chia sẻ màng hình
@@ -141,13 +157,16 @@ function addVideoStream(video, stream, uId = "") {
     video.play();
   });
   videoGrid.append(video);
-  let totalUsers = document.getElementsByClassName("video-call").length;
-  if (totalUsers > 1) {
-    for (let index = 0; index < totalUsers; index++) {
-      document.getElementsByClassName("video-call")[index].style.width =
-        100 / totalUsers + "%";
-    }
-  }
+  video.width = 200;
+  video.float = "left";
+  videoGrid.scrollTop = videoGrid.scrollHeight;
+//  let totalUsers = document.getElementsByClassName("video-call").length;
+//   if (totalUsers > 1) {
+//      for (let index = 0; index < totalUsers; index++) {
+//        document.getElementsByClassName("video-call")[index].style.width =
+//        100 / totalUsers + "%";
+//      }
+//    }
 }
 
 // bật tắt video và micro
@@ -263,6 +282,7 @@ function connect_share() {
     };
     share_now(videoTrack);
   });
+ 
   share_screen = true;
 }
 
@@ -274,6 +294,7 @@ function share_now(videoTrack) {
     sender.replaceTrack(videoTrack);
     console.log(element);
   });
+  socket.emit("screen-share", currentUserId);
 }
 
 function stopScreenSharing() {
@@ -287,6 +308,7 @@ function stopScreenSharing() {
   // local_stream.getTracks().forEach(function (track) {
   //   track.stop();
   // });
+  socket.emit("stop-share", currentUserId);
   share_screen = false;
 }
 
@@ -319,8 +341,7 @@ function live(){
     window.stream = stream;
   })
   document.getElementById("Record").hidden = false;
-  
- 
+  document.getElementById("live").hidden = true;
 }
 
 function recoding(){

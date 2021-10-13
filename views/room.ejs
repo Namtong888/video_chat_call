@@ -18,99 +18,89 @@
     <!-- <link rel="stylesheet" type="text/css" href="room.css" /> -->
     <style>
       body {
-        margin: auto;
         width: 100%;
         height: 100%;
-        font-family: "Roboto", sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .main {
+        width: 100%;
+        height: 600px;
       }
       .main__left {
-        position: absolute;
-        width: 78%;
+        float: left;
+        width: 80%;
         height: 100%;
       }
+      .main__right {
+        float: right;
+        width: 19%;
+        height: 100%;
+        background: rgb(158, 158, 180);
+        border: 1px solid;
+      }
       .main__videos {
-        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        align-items: center;
+        justify-content: center;
+      }
+      .main__videos {
         width: 100%;
       }
       #video-grid {
+        justify-content: center;
         width: 100%;
-        height: 500px;
+        height: 100%;
         align-items: center;
         flex-wrap: wrap;
         overflow-y: auto;
-        /* background-color: aqua; */
       }
-      #video-grid video {
-        /* //  border: 1px solid; */
-        max-width: 600px;
-        min-width: 200px;
-      }
-      #video-share {
-        justify-content: center;
-        height: 100px;
-        width: 100%;
-        align-items: center;
-        flex-wrap: wrap;
-        /* overflow-y: auto; */
-      }
-      #video-share video {
-        width: 100px;
-        height: 100px;
-        /* //object-fit: cover; */
+      /* video {
+        object-fit: cover;
         border: 5px solid #000;
-      }
-
+        width: 327px;
+        margin-right: 10px;
+      
+      }*/
       .main__controls {
-        position: absolute;
         width: 100%;
-        top: 92%;
-        height: 8%;
-        /* background-color: khaki; */
+        height: 10%;
+        line-height: 10%;
+        color: black;
+        border: 1px solid;
       }
       .main__controls_block {
-        float: left;
-        height: 30px;
-        line-height: 30px;
+        margin-top: 20px;
+        width: 100%;
+        text-align: center;
+        margin-left: 35%;
       }
       .main__controls_button {
         float: left;
-        margin-left: 5%;
-        font-size: 13px;
+        margin-right: 20px;
       }
       .main__controls_button:hover {
         background-color: lightslategrey;
         border-radius: 10px;
       }
 
-      .main__right {
-        position: absolute;
-        left: 78%;
-        width: 20%;
-        height: 99%;
-        border: solid;
-      }
+      /* chat */
+
       .main__header {
         color: black;
         text-align: center;
         border-bottom: 2px solid #3d3d42;
       }
-      /* .main__chat__window {
-         flex-grow: 1;
-         overflow: auto; 
-        padding: 5px;
-        background: rgb(121, 121, 47);
-        flex-grow: 1; 
-        overflow-y: auto; 
-      } */
-
+      .main__chat__window {
+        width: 100%;
+        height: 85%;
+        flex-grow: 1;
+        overflow: auto;
+      }
       #all_messages {
-        position: absolute;
-        width: 75%;
-        height: 400px;
+        margin-right: 10px;
         list-style: none;
-        overflow-y: auto;
-
-        /* background-color: rgb(182, 182, 72); */
       }
       li {
         color: black;
@@ -118,13 +108,7 @@
         margin-bottom: 5px;
       }
       .main__message_container {
-        position: absolute;
-        top: 90%;
-        left: 5%;
-      }
-      .main__message_container input {
-        background-color: transparent;
-        color: black;
+        margin-left: 5%;
       }
       .unmute {
         color: red;
@@ -160,7 +144,7 @@
         </div>
 
         <div class="main__controls">
-          <div class="main__controls_block" style="width: 15%">
+          <div class="main__controls_block">
             <div
               class="main__controls_button"
               id="muteButton"
@@ -168,6 +152,7 @@
             >
               <i class="fa fa-microphone"></i>
             </div>
+
             <div
               class="main__controls_button"
               id="playPauseVideo"
@@ -175,12 +160,7 @@
             >
               <i class="fa fa-video-camera"></i>
             </div>
-          </div>
 
-          <div
-            class="main__controls_block"
-            style="width: 50%; margin-left: 10%"
-          >
             <button
               class="main__controls_button"
               id="share-screen"
@@ -190,22 +170,33 @@
               <span>Share Screen</span>
             </button>
 
-            <button class="main__controls_button" id="join">
+            <button
+              class="main__controls_button"
+              id="join"
+              style="background: chartreuse"
+            >
               <span>JOIN</span>
             </button>
 
-            <button class="main__controls_button" id="live" onclick="live()">
-             Record screen
+            <button
+              class="main__controls_button"
+              id="live"
+              onclick="live()"
+              style="background: rgb(182, 5, 34)"
+            >
+              Record screen
             </button>
 
             <button
               class="main__controls_button"
               id="Record"
               onclick="recoding()"
+              style="background: rgb(211, 10, 43)"
               hidden
             >
               Record
             </button>
+
             <button
               class="main__controls_button"
               id="stopRecording"
@@ -214,6 +205,7 @@
             >
               stop Record
             </button>
+
             <button
               class="main__controls_button"
               id="download"
@@ -224,9 +216,7 @@
                 <span>download</span>
               </span>
             </button>
-          </div>
 
-          <div class="main__controls_block" style="float: right; width: 10%">
             <a href="/">
               <div
                 class="main__controls_button leaveMeeting"

@@ -49,8 +49,12 @@ io.on("connection", (socket) => {
     });
 
     socket.on('screen-share', stream => {
-      console.log(stream);
+      // console.log(stream);
       io.to(roomId).emit('screenShare', stream)
+    })
+
+    socket.on('stop-share', users => {
+      io.to(roomId).emit('stop--Share', users)
     })
         
     socket.on("disconnect", () => {
