@@ -52,7 +52,7 @@ myPeer.on("open", (id) => {
 // nhận kết nối và thực hiện kết nối với room :
 socket.on("user-connected", (userId) => {
   connectToNewUser(userId, local_stream);
-  alert( userId + " đã tham gia cuộc hộp");
+  alert(userId + " đã tham gia cuộc hộp");
 
   if (share_screen == true) {
     share_now(videoTracks);
@@ -79,18 +79,19 @@ socket.on("user-disconnected", (userId) => {
 });
 
 // hiện giá mang hinh share
-socket.on('screenShare', (users) =>{
- var share_video =  document.getElementById(users)
+socket.on("screenShare", (users) => {
+  var share_video = document.getElementById(users);
   share_video.width = 1000;
   share_video.float = "right";
   videoGrid.textLine = center;
-})
+  
+});
 
-socket.on('stop--Share', (users) =>{
-  var video =  document.getElementById(users)
-  video.width = 200;
+socket.on("stop--Share", (users) => {
+  var video = document.getElementById(users);
+  video.width = 350;
   video.float = "left";
-})
+});
 
 // giữ tin nhấn cho người call nhấn enter
 document.addEventListener("keydown", (e) => {
@@ -158,16 +159,16 @@ function addVideoStream(video, stream, uId = "") {
     video.play();
   });
   videoGrid.append(video);
-  video.width = 200;
+  video.width = 350;
   video.float = "left";
   videoGrid.scrollTop = videoGrid.scrollHeight;
-//  let totalUsers = document.getElementsByClassName("video-call").length;
-//   if (totalUsers > 1) {
-//      for (let index = 0; index < totalUsers; index++) {
-//        document.getElementsByClassName("video-call")[index].style.width =
-//        100 / totalUsers + "%";
-//      }
-//    }
+  //  let totalUsers = document.getElementsByClassName("video-call").length;
+  //   if (totalUsers > 1) {
+  //      for (let index = 0; index < totalUsers; index++) {
+  //        document.getElementsByClassName("video-call")[index].style.width =
+  //        100 / totalUsers + "%";
+  //      }
+  //    }
 }
 
 // bật tắt video và micro
@@ -277,10 +278,10 @@ function connect_share() {
   navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
     var share__video__stream = document.createElement("video");
     share__video__stream.id = "sharevideostreamm";
-    share__video__stream.width= 300;
+    share__video__stream.width = 300;
     share__video__stream.srcObject = stream;
     share__video__stream.play();
-    videoGrid.append(share__video__stream)
+    videoGrid.append(share__video__stream);
 
     screenStream = stream;
     let videoTrack = screenStream.getVideoTracks()[0];
@@ -290,11 +291,12 @@ function connect_share() {
     };
     share_now(videoTrack);
   });
- 
+
   share_screen = true;
 }
 
 function share_now(videoTrack) {
+  socket.emit("screen-share", currentUserId);
   connet.forEach((element) => {
     let sender = element.getSenders().find(function (s) {
       return s.track.kind == videoTrack.kind;
@@ -302,7 +304,6 @@ function share_now(videoTrack) {
     sender.replaceTrack(videoTrack);
     console.log(element);
   });
-  socket.emit("screen-share", currentUserId);
   document.getElementById(currentUserId).hidden = true;
 }
 
@@ -344,47 +345,50 @@ function stopScreenSharing() {
 //   share_stream = true;
 // });
 
+const recordButton = document.querySelector("button#record");
 
-const recordButton = document.querySelector('button#record');
-
-function live(){
-  navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }).then((stream) => {
-    window.stream = stream;
-  })
+function live() {
+  navigator.mediaDevices
+    .getDisplayMedia({ video: true, audio: true })
+    .then((stream) => {
+      window.stream = stream;
+    });
   document.getElementById("Record").hidden = false;
   document.getElementById("live").hidden = true;
 }
 
-function recoding(){
+function recoding() {
   startRecording();
- console.log("chạy");
- document.getElementById("stopRecording").hidden = false;
- document.getElementById("Record").hidden = true;
+  console.log("chạy");
+  document.getElementById("stopRecording").hidden = false;
+  document.getElementById("Record").hidden = true;
 }
 
 function startRecording() {
   recordedBlobs = [];
-  let options = {mimeType: 'video/webm;codecs=vp9,opus'};
+  let options = { mimeType: "video/webm;codecs=vp9,opus" };
   try {
     mediaRecorder = new MediaRecorder(window.stream, options);
   } catch (e) {
-    console.error('Exception while creating MediaRecorder:', e);
-    errorMsgElement.innerHTML = `Exception while creating MediaRecorder: ${JSON.stringify(e)}`;
+    console.error("Exception while creating MediaRecorder:", e);
+    errorMsgElement.innerHTML = `Exception while creating MediaRecorder: ${JSON.stringify(
+      e
+    )}`;
     return;
   }
 
-  console.log('Created MediaRecorder', mediaRecorder, 'with options', options);
-  
+  console.log("Created MediaRecorder", mediaRecorder, "with options", options);
+
   mediaRecorder.onstop = (event) => {
-    console.log('Recorder stopped: ', event);
-    console.log('Recorded Blobs: ', recordedBlobs);
+    console.log("Recorder stopped: ", event);
+    console.log("Recorded Blobs: ", recordedBlobs);
   };
   mediaRecorder.ondataavailable = handleDataAvailable;
   mediaRecorder.start();
-  console.log('MediaRecorder started', mediaRecorder);
+  console.log("MediaRecorder started", mediaRecorder);
 }
 function handleDataAvailable(event) {
-  console.log('handleDataAvailable', event);
+  console.log("handleDataAvailable", event);
   if (event.data && event.data.size > 0) {
     recordedBlobs.push(event.data);
   }
@@ -397,13 +401,13 @@ function stopRecording() {
   document.getElementById("stopRecording").hidden = true;
 }
 
-function download(){
-  const blob = new Blob(recordedBlobs, {type: 'video/mp4'});
+function download() {
+  const blob = new Blob(recordedBlobs, { type: "video/mp4" });
   const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.style.display = 'none';
+  const a = document.createElement("a");
+  a.style.display = "none";
   a.href = url;
-  a.download = 'video_call.mp4';
+  a.download = "video_call.mp4";
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
@@ -414,4 +418,3 @@ function download(){
   document.getElementById("stopRecording").hidden = true;
   document.getElementById("download").hidden = false;
 }
-
