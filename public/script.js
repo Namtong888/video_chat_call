@@ -1,6 +1,7 @@
 const socket = io("/");
 const chatInputBox = document.getElementById("chat_message");
 const all_messages = document.getElementById("all_messages");
+const userjoin = document.getElementById("user_join");
 const main__chat__window = document.getElementById("main__chat__window");
 const videoGrid = document.getElementById("video-grid");
 const share = document.getElementById("my-video");
@@ -46,18 +47,35 @@ myPeer.on("open", (id) => {
     document.getElementById("share-screen").hidden = false;
     currentUserId = id;
     socket.emit("join-room", ROOM_ID, id);
+    document.getElementById("live").hidden = false;
+    document.getElementById("chat").hidden = false;
+    document.getElementById("User").hidden = false;
   });
 });
 
 // nhận kết nối và thực hiện kết nối với room :
 socket.on("user-connected", (userId) => {
   connectToNewUser(userId, local_stream);
+  user_join(userId);
   alert(userId + " đã tham gia cuộc hộp");
-
   if (share_screen == true) {
     share_now(videoTracks);
   }
 });
+
+// user tham gia cuôc họp;
+function user_join(user) {
+  let li = document.createElement("li");
+  if (user != currentUserId) {
+    li.id="user_"+user;
+    li.innerHTML = `<div class="mess"  style="border: 0.1 solid;  border-radius: 20px; background: honeydew;"><b  style="font-size: 14px; color: red; margin-left:10px"> user(<small>${user}</small>) </b><div>`;
+  } else {
+    li.id="user_"+ currentUserId;
+    li.innerHTML = `<div class="mess" style="text-align: right; border: 0.1 solid;  border-radius: 20px; background: moccasin;"><b style="font-size: 14px; color: red; margin-right:10px">you</b><div>`;
+  }
+  userjoin.append(li);
+  main__chat__window.scrollTop = main__chat__window.scrollHeight;
+}
 
 // nghe các cuộc gọi đến
 myPeer.on("call", (call) => {
@@ -67,6 +85,7 @@ myPeer.on("call", (call) => {
   call.on("stream", (userVideoStream) => {
     addVideoStream(video, userVideoStream, call.peer);
   });
+  user_join(call.peer);
   connet.push(call.peerConnection);
   console.log(connet);
 });
@@ -76,6 +95,8 @@ socket.on("user-disconnected", (userId) => {
   if (peers[userId]) peers[userId].close();
   alert(userId + "đã thoát kết nối");
   document.getElementById(userId).remove();
+  var user = "user_"+userId;
+  document.getElementById(user).remove();
 });
 
 // hiện giá mang hinh share
@@ -84,7 +105,6 @@ socket.on("screenShare", (users) => {
   share_video.width = 1000;
   share_video.float = "right";
   videoGrid.textLine = center;
-  
 });
 
 socket.on("stop--Share", (users) => {
@@ -107,8 +127,10 @@ document.addEventListener("keydown", (e) => {
 // nghe tin nhắn được giữ đến và hiển thị lên HTML
 socket.on("createMessage", (message) => {
   console.log(message);
+  const chat_i = document.getElementById("chat_i");
   let li = document.createElement("li");
   if (message.user != currentUserId) {
+    chat_i.hidden = false;
     li.classList.add("otherUser");
     li.innerHTML = `<div class="mess" id="${currentUserId}" style="border: 0.1 solid;  border-radius: 20px; background: honeydew;"><b  style="font-size: 8px; color: red; margin-left:5px"> user(<small>${message.user}</small>) </b></br><span style="font-size: 13px; margin-left:10px;"> ${message.msg}</span><div>`;
   } else {
@@ -418,3 +440,5 @@ function download() {
   document.getElementById("stopRecording").hidden = true;
   document.getElementById("download").hidden = false;
 }
+
+// js cho trang web
