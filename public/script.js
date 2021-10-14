@@ -67,11 +67,11 @@ socket.on("user-connected", (userId) => {
 function user_join(user) {
   let li = document.createElement("li");
   if (user != currentUserId) {
-    li.id="user_"+user;
-    li.innerHTML = `<div class="mess"  style="border: 0.1 solid;  border-radius: 20px; background: honeydew;"><b  style="font-size: 14px; color: red; margin-left:10px"> user(<small>${user}</small>) </b><div>`;
-  } else {
-    li.id="user_"+ currentUserId;
-    li.innerHTML = `<div class="mess" style="text-align: right; border: 0.1 solid;  border-radius: 20px; background: moccasin;"><b style="font-size: 14px; color: red; margin-right:10px">you</b><div>`;
+    li.id= "user_"+user;
+    li.innerHTML = `<div style="border: 0.1 solid;">
+    <b style="font-size: 14px; color: red;">user(<small>${user}</small>)</b>
+     <i class=" fa fa-video-camera"></i>
+    <div>`;
   }
   userjoin.append(li);
   main__chat__window.scrollTop = main__chat__window.scrollHeight;
@@ -102,15 +102,14 @@ socket.on("user-disconnected", (userId) => {
 // hiện giá mang hinh share
 socket.on("screenShare", (users) => {
   var share_video = document.getElementById(users);
-  share_video.width = 1000;
-  share_video.float = "right";
-  videoGrid.textLine = center;
+  share_video.width = 900;
+  share_video.style.float = "right";
 });
 
 socket.on("stop--Share", (users) => {
   var video = document.getElementById(users);
-  video.width = 350;
-  video.float = "left";
+  video.width = 150;
+  video.style.float = "left";
 });
 
 // giữ tin nhấn cho người call nhấn enter
@@ -181,8 +180,8 @@ function addVideoStream(video, stream, uId = "") {
     video.play();
   });
   videoGrid.append(video);
-  video.width = 350;
-  video.float = "left";
+  video.width = 150;
+  video.style.float = "left";
   videoGrid.scrollTop = videoGrid.scrollHeight;
   //  let totalUsers = document.getElementsByClassName("video-call").length;
   //   if (totalUsers > 1) {
@@ -313,12 +312,10 @@ function connect_share() {
     };
     share_now(videoTrack);
   });
-
   share_screen = true;
 }
 
 function share_now(videoTrack) {
-  socket.emit("screen-share", currentUserId);
   connet.forEach((element) => {
     let sender = element.getSenders().find(function (s) {
       return s.track.kind == videoTrack.kind;
@@ -327,6 +324,7 @@ function share_now(videoTrack) {
     console.log(element);
   });
   document.getElementById(currentUserId).hidden = true;
+  socket.emit("screen-share", currentUserId);
 }
 
 function stopScreenSharing() {

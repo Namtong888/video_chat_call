@@ -106,18 +106,27 @@
       .main__chat__window {
         width: 100%;
         height: 85%;
-        flex-grow: 1;
         overflow: auto;
       }
       #all_messages {
         margin-right: 10px;
         list-style: none;
       }
-      li {
+      #all_messages li {
         color: black;
         width: 100%;
         margin-bottom: 5px;
       }
+      .user_join {
+        list-style: none;
+      }
+      .user_join li {
+        color: black;
+        width: 100%;
+        margin-bottom: 5px;
+        border-bottom: 1px solid;
+      }
+
       .main__message_container {
         margin-left: 2%;
       }
@@ -299,11 +308,10 @@
       </div>
 
       <div class="main__right_User" id="main__right_User">
-        <div class="main__header">
-          <h6>User</h6>
-        </div>
-        <div class="main__chat__window" id="main__chat__window">
-          <ul class="user_join" id="user_join"></ul>
+        <div>
+          <ul class="user_join" id="user_join">
+            <li><div>You</div></li>
+          </ul>
         </div>
       </div>
     </div>
