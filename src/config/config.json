@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "lab2021",
+    "password": "lab2021",
+    "database": "chatapp",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "lab2021",
+    "password": "lab2021",
+    "database": "chatapp",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "lab2021",
+    "password": "lab2021",
+    "database": "chatapp",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}

@@ -1,22 +1,25 @@
 const express = require('express');
 const path = require('path');
-const routes = require('./routes');
+const { webRoutes, apiRoutes } = require('./routes');
 
 const app = express();
-
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 // Config ViewEngine
-app.set("views", './src/views');
+app.set("views", path.join(__dirname, 'views'));
 app.set("view engine", "ejs");
+
+// parse json request body
+app.use(express.json());
 
 // Config StaticFiles
 app.use("/static", express.static(path.join(__dirname, 'public')));
 
 // Config Routing
-app.use('/', routes);
+app.use('/', webRoutes);
+app.use('/api', apiRoutes);
   
 // Socket service
 io.on("connection", (socket) => {
